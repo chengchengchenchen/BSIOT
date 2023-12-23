@@ -1,33 +1,22 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
+import LoginPage from "./page/login/login"
+import HomePage from "./page/home/home"
 
 function App() {
 
   return <BrowserRouter>
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/" element={<LoginPage />} />
+      <Route path="/home" element={<HomePage />} />
       <Route path='*' element={<NotFound />} />
     </Routes>
   </BrowserRouter>
 }
 
 function NotFound(){
-  return <div>这里是卡拉云的主页</div>
+  return <div>404 Not Founds</div>
 }
 
-
-function Home() {
-  return <div>hello world</div>
-}
-
-const About = () => {
-  return <div>这里是卡拉云的主页</div>
-}
-
-const Dashboard = () => {
-  return <div>今日活跃用户: 42</div>
-}
 
 export default App;
 
