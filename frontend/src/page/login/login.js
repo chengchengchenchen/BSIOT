@@ -1,16 +1,38 @@
 import React from 'react';
-import { Form, Input, Button, Typography, Divider } from 'antd';
+import { Form, Input, Button, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 import './Login.css';
 
 const { Title } = Typography;
 
 const LoginPage = () => {
-  const onFinish = (values) => {
-    // 处理登录逻辑
-    console.log('Received values:', values);
-  };
+  const navigate = useNavigate();
+  const onFinish = async (values) => {
+    try {
+      console.log('Received values:', values);
+      const response = await fetch('http://127.0.0.1:5000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Login successful:', data);
+        navigate('/home')
+      } else {
+        console.error('Login failed:', response.statusText);
+        console.log('error:', response.json());
+      }
+    } catch (error) {
+      console.error('Error during login:', error.message);
+    }
+  }
 
   return (
     <div className="login-container" style={{ background: 'linear-gradient(-45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee 100%)' }}>
