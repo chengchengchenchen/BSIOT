@@ -66,7 +66,7 @@ const DeviceConfigPage = () => {
         try {
             const response = await fetch('http://127.0.0.1:5000/devices');
             const data = await response.json();
-            //console.log(data)
+            console.log(data)
             setDevices(data);
         } catch (error) {
             console.error('Error fetching devices:', error.message);
@@ -191,7 +191,7 @@ const DeviceConfigPage = () => {
                             <Form.Item name="type" label="Type">
                                 <Input />
                             </Form.Item>
-                            <Form.Item name="value" label="Value" rules={[{required: true }]}>
+                            <Form.Item name="value" label="Value" rules={[{ required: true }]}>
                                 <Input type="number" />
                             </Form.Item>
                             <Form.Item name="alert" label="Alert" rules={[{ required: true }]}>

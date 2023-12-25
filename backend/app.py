@@ -165,5 +165,36 @@ def delete_device():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/search', methods=['POST'])
+def search_messages():
+    try:
+        data = request.get_json()
+
+        if 'ID' not in data:
+            return jsonify({'error': 'Device ID is required'}), 400
+
+        deviceId = int(data['ID'])
+
+        query = "SELECT * FROM iot_message WHERE ID = %s ORDER BY timestamp DESC LIMIT 50"
+        db_cursor.execute(query, (deviceId,))
+        messages = db_cursor.fetchall()
+
+        messages_list = []
+        for message in messages:
+            message_dict = {
+                'ID': message[0],
+                'info': message[1],
+                'lng': message[2],
+                'lat': message[3],
+                'timestamp': message[4]
+            }
+            messages_list.append(message_dict)
+
+        return jsonify(messages_list)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 if __name__ == '__main__':
     app.run('127.0.0.1', port=5000, debug=True)
