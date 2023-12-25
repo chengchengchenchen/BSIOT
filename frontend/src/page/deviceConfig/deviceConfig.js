@@ -191,7 +191,7 @@ const DeviceConfigPage = () => {
                             <Form.Item name="type" label="Type">
                                 <Input />
                             </Form.Item>
-                            <Form.Item name="value" label="Value" rules={[{ required: true }]}>
+                            <Form.Item name="value" label="Value" rules={[{required: true }]}>
                                 <Input type="number" />
                             </Form.Item>
                             <Form.Item name="alert" label="Alert" rules={[{ required: true }]}>
