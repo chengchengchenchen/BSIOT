@@ -28,8 +28,7 @@ def login():
         username = data['username']
         password = data['password']
 
-        query = "SELECT * FROM user WHERE ID=%s AND password=%s"
-        # print(query)
+        query = "SELECT * FROM user WHERE username=%s AND password=%s"
         db_cursor.execute(query, (username, password))
         res = db_cursor.fetchone()
 
@@ -55,13 +54,13 @@ def register():
         email = data['email']
 
         # Check
-        check_query = "SELECT * FROM user WHERE ID=%s OR email=%s"
+        check_query = "SELECT * FROM user WHERE username=%s OR email=%s"
         db_cursor.execute(check_query, (username, email))
         existing_user = db_cursor.fetchone()
         if existing_user:
             return jsonify({'error': 'Username or email already exists'}), 409
 
-        insert_query = "INSERT INTO user (ID, password, email) VALUES (%s, %s, %s)"
+        insert_query = "INSERT INTO user (username, password, email) VALUES (%s, %s, %s)"
         db_cursor.execute(insert_query, (username, password, email))
         db_connection.commit()
 
@@ -74,27 +73,49 @@ def register():
 @app.route('/devices', methods=['GET'])
 def get_initial_devices():
     try:
-        # Query to fetch all devices from the database
         query = "SELECT * FROM iot_device"
         db_cursor.execute(query)
         devices = db_cursor.fetchall()
-
-        # Convert the result to a list of dictionaries for JSON response
+        db_connection.commit()
+        # print(devices)
         devices_list = []
         for device in devices:
             device_dict = {
-                'clientId': device[0],
+                'ID': device[0],
                 'name': device[1],
                 'value': device[2],
                 'type': device[3],
                 'alert': device[4]
             }
             devices_list.append(device_dict)
-
         return jsonify(devices_list)
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/devices/add', methods=['POST'])
+def add_devices():
+    try:
+        query = "SELECT * FROM user"
+        db_cursor.execute(query)
+        devices = db_cursor.fetchall()
+        db_connection.commit()
+        # print(devices)
+        return jsonify('success'), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/devices/update', methods=['POST'])
+def update_devices():
+    return
+
+
+@app.route('/devices/delete', methods=['POST'])
+def delete_devices():
+    return
 
 
 if __name__ == '__main__':

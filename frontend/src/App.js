@@ -1,8 +1,11 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import LoginPage from "./page/login/login"
-import HomePage from "./page/home/home"
 import RegisterPage from "./page/register/register"
+import HomePage from "./page/home/home"
 import DeviceConfigPage from "./page/deviceConfig/deviceConfig"
+import SearchPage from "./page/search/search"
+import MapPage from "./page/map/map"
+
 function App() {
 
   return <BrowserRouter>
@@ -11,6 +14,8 @@ function App() {
       <Route path="/Register" element={<RegisterPage />} />
       <Route path="/home" element={<HomePage />} />
       <Route path="/deviceConfig" element={<DeviceConfigPage />} />
+      <Route path="/query" element={<SearchPage />} />
+      <Route path="/map" element={<MapPage />} />
       <Route path='*' element={<NotFound />} />
     </Routes>
   </BrowserRouter>

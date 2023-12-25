@@ -22,22 +22,17 @@ def on_connect(client, userdata, flags, rc):
 
 
 # 定义一个回调函数，当收到mqtt服务器发送的消息时调用
-# msg.topic
-# msg.payload
-# TODO: Duplicate entry 'device0005-1702992918638' for key 'iot_message.PRIMARY'
-# 存在deviceId-timestamp相同的情况，修改一下mqtt信息发送器
-
 def on_message(client, userdata, msg):
     # print(msg.payload.decode('utf-8'))
     res = json.loads(msg.payload.decode('utf-8'))
     sql1 = f'''
     UPDATE iot_device 
     SET value = {res['value']}, alert = {res['alert']} 
-    WHERE clientId = '{res['clientId']}'
+    WHERE ID = '{res['iD']}'
     '''
     sql2 = f'''
-    INSERT INTO iot_message (clientId, res, lng, lat, timestamp) 
-    VALUES ('{res['clientId']}', '{res['res']}', {res['lng']}, {res['lat']}, {res['timestamp']});
+    INSERT INTO iot_message (ID, info, lng, lat, timestamp) 
+    VALUES ('{res['iD']}', '{res['info']}', {res['lng']}, {res['lat']}, {res['timestamp']});
     '''
 
     db_cursor.execute(sql1)

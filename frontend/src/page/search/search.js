@@ -8,14 +8,14 @@ import { Menu } from 'antd';
 
 const { Header, Sider, Content } = Layout;
 
-const HomePage = () => {
-  const isMobile = useMediaQuery({ maxWidth: 767 });
+const SearchPage = () => {
+    const isMobile = useMediaQuery({ maxWidth: 767 });
 
-  return (
-    <Layout>
+    return (
+        <Layout>
       {isMobile ? (
         /* 移动端布局 */
-        <Menu mode="horizontal" defaultSelectedKeys={['1']}>
+        <Menu mode="horizontal" defaultSelectedKeys={['3']}>
           <Menu.Item key="1">
             <Link to="/home"><HomeOutlined /></Link>
           </Menu.Item>
@@ -33,7 +33,7 @@ const HomePage = () => {
         /* PC端布局 */
         <Sider theme="light" width={200}>
           <div className="logo" style={{ fontSize: '24px', color: '#87CEFA' }}><UnorderedListOutlined /></div>
-          <Menu mode="vertical" defaultSelectedKeys={['1']}>
+          <Menu mode="vertical" defaultSelectedKeys={['3']}>
             <Menu.Item key="1">
               <Link to="/home"><HomeOutlined /> 数据统计</Link>
             </Menu.Item>
@@ -50,8 +50,8 @@ const HomePage = () => {
         </Sider>
       )}
     </Layout>
-  );
+    );
 }
 
 
-export default HomePage;
+export default SearchPage;
