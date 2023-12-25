@@ -17,6 +17,12 @@ const DeviceConfigPage = () => {
     const [devices, setDevices] = useState([]);
     const [visible, setVisible] = useState(false);
     const [editingDevice, setEditingDevice] = useState(null);
+    const items = [
+        { key: '1', icon: <HomeOutlined />, label: <Link to="/home">{isMobile ? null : '数据统计'}</Link> },
+        { key: '2', icon: <SettingOutlined />, label: <Link to="/deviceConfig">{isMobile ? null : '设备配置'}</Link> },
+        { key: '3', icon: <SearchOutlined />, label: <Link to="/search">{isMobile ? null : '数据查询'}</Link> },
+        { key: '4', icon: <EnvironmentOutlined />, label: <Link to="/map">{isMobile ? null : '设备轨迹'}</Link> },
+    ];
     const columns = [
         {
             title: 'ID',
@@ -60,7 +66,7 @@ const DeviceConfigPage = () => {
         try {
             const response = await fetch('http://127.0.0.1:5000/devices');
             const data = await response.json();
-            console.log(data)
+            //console.log(data)
             setDevices(data);
         } catch (error) {
             console.error('Error fetching devices:', error.message);
@@ -137,38 +143,12 @@ const DeviceConfigPage = () => {
 
             {isMobile ? (
                 /* 移动端布局 */
-                <Menu mode="horizontal" defaultSelectedKeys={['2']}>
-                    <Menu.Item key="1">
-                        <Link to="/home"><HomeOutlined /></Link>
-                    </Menu.Item>
-                    <Menu.Item key="2">
-                        <Link to="/deviceConfig"><SettingOutlined /></Link>
-                    </Menu.Item>
-                    <Menu.Item key="3">
-                        <Link to="/query"><SearchOutlined /></Link>
-                    </Menu.Item>
-                    <Menu.Item key="4">
-                        <Link to="/map"><EnvironmentOutlined /></Link>
-                    </Menu.Item>
-                </Menu>
+                <Menu mode="horizontal" defaultSelectedKeys={['2']} items={items}></Menu>
             ) : (
                 /* PC端布局 */
                 <Sider theme="light" width={200}>
                     <div className="logo" style={{ fontSize: '24px', color: '#87CEFA' }}><UnorderedListOutlined /></div>
-                    <Menu mode="vertical" defaultSelectedKeys={['2']}>
-                        <Menu.Item key="1" icon=<HomeOutlined />>
-                            <Link to="/home">数据统计</Link>
-                        </Menu.Item>
-                        <Menu.Item key="2" icon=<SettingOutlined />>
-                            <Link to="/deviceConfig">设备配置</Link>
-                        </Menu.Item>
-                        <Menu.Item key="3" icon=<SearchOutlined />>
-                            <Link to="/query">数据查询</Link>
-                        </Menu.Item>
-                        <Menu.Item key="4" icon=<EnvironmentOutlined />>
-                            <Link to="/map">设备轨迹</Link>
-                        </Menu.Item>
-                    </Menu>
+                    <Menu mode="vertical" defaultSelectedKeys={['2']} items={items}></Menu>
                 </Sider>
             )}
 

@@ -14,7 +14,7 @@ function App() {
       <Route path="/Register" element={<RegisterPage />} />
       <Route path="/home" element={<HomePage />} />
       <Route path="/deviceConfig" element={<DeviceConfigPage />} />
-      <Route path="/query" element={<SearchPage />} />
+      <Route path="/search" element={<SearchPage />} />
       <Route path="/map" element={<MapPage />} />
       <Route path='*' element={<NotFound />} />
     </Routes>
