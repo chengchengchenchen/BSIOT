@@ -3,12 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Form, Input, Button, Table, Space, Modal } from 'antd';
 import { useMediaQuery } from 'react-responsive';
-import { EditOutlined, DeleteOutlined, UnorderedListOutlined, PlusOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, UnorderedListOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { HomeOutlined, SettingOutlined, SearchOutlined, EnvironmentOutlined } from '@ant-design/icons';
-import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './DeviceConfig.css';
 
-const { Header, Sider, Content } = Layout;
+const { Sider, Content } = Layout;
 
 const DeviceConfigPage = () => {
     const isMobile = useMediaQuery({ maxWidth: 767 });
@@ -56,44 +56,81 @@ const DeviceConfigPage = () => {
         },
     ];
 
+    const fetchData = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/devices');
+            const data = await response.json();
+            console.log(data)
+            setDevices(data);
+        } catch (error) {
+            console.error('Error fetching devices:', error.message);
+        }
+    };
+
     const handleEdit = (record) => {
         form.setFieldsValue(record);
         setEditingDevice(record);
         setVisible(true);
     };
 
-    const handleDelete = (ID) => {
-        // Implement delete logic, e.g., send a request to the server
-        // After successful deletion, update the devices state
+    const handleDelete = async (ID) => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/devices/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ID }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Device deletion successful:', data);
+                fetchData();
+            } else {
+                const errorData = await response.json();
+                console.error('Device deletion failed:', errorData || response.statusText);
+            }
+        } catch (error) {
+            console.error('Error during device deletion:', error.message);
+        }
     };
 
     const onFinish = async (values) => {
+        try {
+            let apiUrl = 'http://127.0.0.1:5000/devices/add';
 
-        // After successful creation or update, update the devices state
-        // Implement create or update logic, e.g., send a request to the server
-        setVisible(false);
-        setEditingDevice(null); // Clear editing state
-        form.resetFields(); // Clear form fields
+            if (editingDevice) {
+                apiUrl = `http://127.0.0.1:5000/devices/update`;
+            }
 
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(values),
+            });
 
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Device operation successful:', data);
 
+                fetchData();
+
+                setVisible(false);
+                setEditingDevice(null);
+                form.resetFields();
+            } else {
+                const errorData = await response.json();
+                console.error('Device operation failed:', errorData || response.statusText);
+            }
+        } catch (error) {
+            console.error('Error during device operation:', error.message);
+        }
     };
 
-    useEffect(() => {
-        // Fetch devices data from the server and update the devices state
-        const fetchData = async () => {
-            try {
-                const response = await fetch('http://127.0.0.1:5000/devices');
-                const data = await response.json();
-                console.log(data)
-                setDevices(data);
-            } catch (error) {
-                console.error('Error fetching devices:', error.message);
-            }
-        };
-
-        fetchData();
-    }, []);
+    useEffect(() => { fetchData(); }, []);
 
     return (
         <Layout className="device-config-container">
@@ -119,17 +156,17 @@ const DeviceConfigPage = () => {
                 <Sider theme="light" width={200}>
                     <div className="logo" style={{ fontSize: '24px', color: '#87CEFA' }}><UnorderedListOutlined /></div>
                     <Menu mode="vertical" defaultSelectedKeys={['2']}>
-                        <Menu.Item key="1">
-                            <Link to="/home"><HomeOutlined /> 数据统计</Link>
+                        <Menu.Item key="1" icon=<HomeOutlined />>
+                            <Link to="/home">数据统计</Link>
                         </Menu.Item>
-                        <Menu.Item key="2">
-                            <Link to="/deviceConfig"><SettingOutlined /> 设备配置</Link>
+                        <Menu.Item key="2" icon=<SettingOutlined />>
+                            <Link to="/deviceConfig">设备配置</Link>
                         </Menu.Item>
-                        <Menu.Item key="3">
-                            <Link to="/query"><SearchOutlined /> 数据查询</Link>
+                        <Menu.Item key="3" icon=<SearchOutlined />>
+                            <Link to="/query">数据查询</Link>
                         </Menu.Item>
-                        <Menu.Item key="4">
-                            <Link to="/map"><EnvironmentOutlined /> 设备轨迹</Link>
+                        <Menu.Item key="4" icon=<EnvironmentOutlined />>
+                            <Link to="/map">设备轨迹</Link>
                         </Menu.Item>
                     </Menu>
                 </Sider>
@@ -140,10 +177,18 @@ const DeviceConfigPage = () => {
                 <Content>
                     <Button onClick={() => {
                         setVisible(true);
-                        setEditingDevice(null); // Clear editing state
-                        form.resetFields(); // Clear form fields
-                    }}>
-                        <PlusOutlined />
+                        setEditingDevice(null);
+                        form.resetFields();
+                    }}
+                        icon={<PlusOutlined />}
+                        style={{ border: 'none' }}>
+
+                    </Button>
+                    <Button
+                        onClick={fetchData}
+                        icon={<ReloadOutlined />}
+                        style={{ border: 'none' }}
+                    >
                     </Button>
                     <Table dataSource={devices} columns={columns} rowKey="ID" />
                     <Modal
@@ -152,8 +197,8 @@ const DeviceConfigPage = () => {
                         onOk={form.submit}
                         onCancel={() => {
                             setVisible(false);
-                            setEditingDevice(null); // Clear editing state
-                            form.resetFields(); // Clear form fields
+                            setEditingDevice(null);
+                            form.resetFields();
                         }}
                     >
                         <Form key={editingDevice ? 'edit' : 'create'} form={form} onFinish={onFinish} labelCol={{ span: 4 }} wrapperCol={{ span: 16 }}>
@@ -181,4 +226,3 @@ const DeviceConfigPage = () => {
 };
 
 export default DeviceConfigPage;
-

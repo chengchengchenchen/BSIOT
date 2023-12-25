@@ -71,7 +71,7 @@ def register():
 
 
 @app.route('/devices', methods=['GET'])
-def get_initial_devices():
+def get_devices():
     try:
         query = "SELECT * FROM iot_device"
         db_cursor.execute(query)
@@ -95,27 +95,74 @@ def get_initial_devices():
 
 
 @app.route('/devices/add', methods=['POST'])
-def add_devices():
+def add_device():
     try:
-        query = "SELECT * FROM user"
-        db_cursor.execute(query)
-        devices = db_cursor.fetchall()
+        data = request.get_json()
+        print(data)
+        if 'ID' not in data or 'name' not in data or 'value' not in data or 'alert' not in data:
+            return jsonify({'error': 'ID, Name, value, type, and alert are required'}), 400
+
+        ID = int(data['ID'])
+        name = data['name']
+        value = int(data['value'])
+        alert = int(data['alert'])
+        if 'type' in data:
+            device_type = data['type']
+            insert_query = "INSERT INTO iot_device (ID, name, value, type, alert) VALUES (%s, %s, %s, %s, %s)"
+            db_cursor.execute(insert_query, (ID, name, value, device_type, alert))
+        else:
+            insert_query = "INSERT INTO iot_device (ID, name, value, alert) VALUES (%s, %s, %s, %s)"
+            db_cursor.execute(insert_query, (ID, name, value, alert))
+
         db_connection.commit()
-        # print(devices)
-        return jsonify('success'), 200
+        return jsonify({'message': 'Device added successfully'})
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 
 @app.route('/devices/update', methods=['POST'])
-def update_devices():
-    return
+def update_device():
+    try:
+        data = request.get_json()
+
+        if 'ID' not in data or 'name' not in data or 'value' not in data or 'type' not in data or 'alert' not in data:
+            return jsonify({'error': 'ID, Name, value, type, and alert are required'}), 400
+
+        ID = int(data['ID'])
+        name = data['name']
+        value = int(data['value'])
+        device_type = data['type']
+        alert = int(data['alert'])
+
+        update_query = "UPDATE iot_device SET name = %s, value = %s, type = %s, alert = %s WHERE ID = %s"
+        db_cursor.execute(update_query, (name, value, device_type, alert, ID))
+        db_connection.commit()
+
+        return jsonify({'message': 'Device updated successfully'})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/devices/delete', methods=['POST'])
-def delete_devices():
-    return
+def delete_device():
+    try:
+        data = request.get_json()
+
+        if 'ID' not in data:
+            return jsonify({'error': 'Device ID is required'}), 400
+
+        ID = int(data['ID'])
+
+        delete_query = "DELETE FROM iot_device WHERE ID = %s"
+        db_cursor.execute(delete_query, (ID,))
+        db_connection.commit()
+
+        return jsonify({'message': 'Device deleted successfully'})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':
