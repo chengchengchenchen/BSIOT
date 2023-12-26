@@ -55,7 +55,7 @@ const SearchPage = () => {
                     minute: 'numeric',
                     second: 'numeric',
                     hour12: false,
-                    timeZone: 'Asia/Shanghai', // Set the time zone to Beijing time
+                    timeZone: 'Asia/Shanghai',
                 });
                 return formattedTimestamp;
             },
@@ -72,9 +72,14 @@ const SearchPage = () => {
                 },
                 body: JSON.stringify(values),
             });
+            if (response.ok) {
+                const data = await response.json();
+                setMessages(data);
+            } else {
+                const errorData = await response.json();
+                console.error('Fetch failed:', errorData || response.statusText);
+            }
             
-            const data = await response.json();
-            setMessages(data);
         } catch (error) {
             console.error('Error fetching messages:', error.message);
         }
