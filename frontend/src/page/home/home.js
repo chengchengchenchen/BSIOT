@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Menu, Card, theme } from 'antd';
+import { Layout, Menu, Card } from 'antd';
 import { UnorderedListOutlined, HomeOutlined, SettingOutlined, SearchOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import { useMediaQuery } from 'react-responsive';
 import { Link } from 'react-router-dom';
