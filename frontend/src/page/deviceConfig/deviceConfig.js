@@ -1,5 +1,3 @@
-// DeviceConfigPage.js
-
 import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Form, Input, Button, Table, Space, Modal } from 'antd';
 import { useMediaQuery } from 'react-responsive';

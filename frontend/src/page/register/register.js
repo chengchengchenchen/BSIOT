@@ -16,9 +16,6 @@ const RegisterPage = () => {
     try {
       console.log('Received values:', values);
 
-      // Perform additional validation if needed
-      // Example: Validate unique username and email on the server
-
       const response = await fetch('http://127.0.0.1:5000/register', {
         method: 'POST',
         headers: {

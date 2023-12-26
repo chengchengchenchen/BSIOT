@@ -3,7 +3,6 @@ import { Form, Input, Button, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import { useLocation } from 'react-router-dom';
 import './Login.css';
 
 const { Title } = Typography;

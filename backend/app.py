@@ -38,6 +38,7 @@ def login():
             return jsonify({'error': 'Invalid username or password'}), 401
 
     except Exception as e:
+        print(str(e))
         return jsonify({'error': str(e)}), 500
 
 
@@ -67,6 +68,7 @@ def register():
         return jsonify({'message': 'Registration successful', 'username': username})
 
     except Exception as e:
+        print(str(e))
         return jsonify({'error': str(e)}), 500
 
 
@@ -77,7 +79,7 @@ def get_devices():
         db_cursor.execute(query)
         devices = db_cursor.fetchall()
         db_connection.commit()
-        # print(devices)
+
         devices_list = []
         for device in devices:
             device_dict = {
@@ -91,6 +93,7 @@ def get_devices():
         return jsonify(devices_list)
 
     except Exception as e:
+        print(str(e))
         return jsonify({'error': str(e)}), 500
 
 
@@ -118,6 +121,7 @@ def add_device():
         return jsonify({'message': 'Device added successfully'})
 
     except Exception as e:
+        print(str(e))
         return jsonify({'error': str(e)}), 500
 
 
@@ -142,6 +146,7 @@ def update_device():
         return jsonify({'message': 'Device updated successfully'})
 
     except Exception as e:
+        print(str(e))
         return jsonify({'error': str(e)}), 500
 
 
@@ -162,6 +167,7 @@ def delete_device():
         return jsonify({'message': 'Device deleted successfully'})
 
     except Exception as e:
+        print(str(e))
         return jsonify({'error': str(e)}), 500
 
 
@@ -178,6 +184,7 @@ def search_messages():
         query = "SELECT * FROM iot_message WHERE ID = %s ORDER BY timestamp DESC LIMIT 50"
         db_cursor.execute(query, (deviceId,))
         messages = db_cursor.fetchall()
+        db_connection.commit()
 
         messages_list = []
         for message in messages:
@@ -193,6 +200,57 @@ def search_messages():
         return jsonify(messages_list)
 
     except Exception as e:
+        print(str(e))
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/device/statistics', methods=['GET'])
+def get_device_statistics():
+    try:
+        # Total Devices
+        total_query = "SELECT COUNT(*) FROM iot_device"
+        db_cursor.execute(total_query)
+        total = db_cursor.fetchone()[0]
+
+        # Alert Devices
+        alert_query = "SELECT COUNT(*) FROM iot_device WHERE alert <> 0"
+        db_cursor.execute(alert_query)
+        alert = db_cursor.fetchone()[0]
+
+        # Online Devices
+        online_query = "SELECT COUNT(DISTINCT ID) FROM iot_message"
+        db_cursor.execute(online_query)
+        online = db_cursor.fetchone()[0]
+
+        db_connection.commit()
+
+        return jsonify({'total': total, 'alert': alert, 'online': online})
+
+    except Exception as e:
+        print(str(e))
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/device/data', methods=['GET'])
+def get_device_data():
+    try:
+        # Query to get message count for each device ID
+        data_query = """
+                SELECT ID, COUNT(*) as value
+                FROM iot_message
+                GROUP BY ID
+            """
+        db_cursor.execute(data_query)
+        data = db_cursor.fetchall()
+        db_connection.commit()
+
+        # Convert the result to a list of dictionaries
+        data_list = [{'name': row[0], 'value': row[1]} for row in data]
+
+        return jsonify(data_list)
+
+    except Exception as e:
+        print(str(e))
         return jsonify({'error': str(e)}), 500
 
 
