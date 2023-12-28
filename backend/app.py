@@ -1,10 +1,8 @@
 # app.py
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import json
 import mysql.connector
 
-# 创建一个数据库连接对象
 db_connection = mysql.connector.connect(
     host="127.0.0.1",
     user="root",
@@ -234,7 +232,6 @@ def get_device_statistics():
 @app.route('/device/data', methods=['GET'])
 def get_device_data():
     try:
-        # Query to get message count for each device ID
         data_query = """
                 SELECT ID, COUNT(*) as value
                 FROM iot_message
@@ -244,10 +241,47 @@ def get_device_data():
         data = db_cursor.fetchall()
         db_connection.commit()
 
-        # Convert the result to a list of dictionaries
         data_list = [{'name': row[0], 'value': row[1]} for row in data]
 
         return jsonify(data_list)
+
+    except Exception as e:
+        print(str(e))
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/map', methods=['GET'])
+def get_device_location():
+    try:
+        device_ids_query = "SELECT ID, alert FROM iot_device ORDER BY ID ASC"
+        db_cursor.execute(device_ids_query)
+        device_ids = db_cursor.fetchall()
+
+        device_locations = []
+
+        for device_id in device_ids:
+            device_location_query = f"""
+                SELECT lng, lat, timestamp
+                FROM iot_message
+                WHERE ID = {device_id[0]}
+                ORDER BY timestamp DESC
+                LIMIT 10
+            """
+            db_cursor.execute(device_location_query)
+            device_data = db_cursor.fetchall()
+            db_connection.commit()
+
+            location_list = [
+                {
+                    'lng': row[0],
+                    'lat': row[1],
+                    'timestamp': row[2]
+                } for row in device_data
+            ]
+
+            device_locations.append({'device_id': device_id[0], 'alert': device_id[1], 'locations': location_list})
+
+        return jsonify(device_locations)
 
     except Exception as e:
         print(str(e))

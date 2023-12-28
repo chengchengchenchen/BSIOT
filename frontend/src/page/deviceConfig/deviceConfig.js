@@ -138,7 +138,6 @@ const DeviceConfigPage = () => {
 
     return (
         <Layout className="device-config-container">
-
             {isMobile ? (
                 /* 移动端布局 */
                 <Menu mode="horizontal" defaultSelectedKeys={['2']} items={items}></Menu>
@@ -149,8 +148,6 @@ const DeviceConfigPage = () => {
                     <Menu mode="vertical" defaultSelectedKeys={['2']} items={items}></Menu>
                 </Sider>
             )}
-
-
             <Layout>
                 <Content>
                     <Button onClick={() => {

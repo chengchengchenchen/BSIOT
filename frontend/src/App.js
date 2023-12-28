@@ -17,6 +17,7 @@ function App() {
       <Route path="/search" element={<SearchPage />} />
       <Route path="/map" element={<MapPage />} />
       <Route path='*' element={<NotFound />} />
+
     </Routes>
   </BrowserRouter>
 }

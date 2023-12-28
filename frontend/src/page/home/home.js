@@ -17,7 +17,7 @@ const HomePage = () => {
     { key: '4', icon: <EnvironmentOutlined />, label: <Link to="/map">{isMobile ? null : '设备轨迹'}</Link> },
   ];
 
-  const [deviceStatistics, setDeviceStatistics] = useState({ total: 10, online: 80, alert: 0 });
+  const [deviceStatistics, setDeviceStatistics] = useState({ total: 0, online: 0, alert: 0 });
   const [deviceData, setDeviceData] = useState([]);
 
   const fetchStatistics = async () => {
@@ -54,7 +54,6 @@ const HomePage = () => {
   useEffect(() => {
     setTimeout(fetchData, 500);
     fetchStatistics();
-    //fetchData();
   }, []);
 
   const option1 = {
