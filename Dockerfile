@@ -28,4 +28,4 @@ COPY . .
 EXPOSE 5000 8000 8080
 
 # 启动前端和后端
-CMD ["sh", "-c", "serve -s frontend/build & python backend/IOT.py & python backend/app.py"]
+CMD ["sh", "-c", "serve -s frontend/build & python3 backend/IOT.py & python3 backend/app.py"]
