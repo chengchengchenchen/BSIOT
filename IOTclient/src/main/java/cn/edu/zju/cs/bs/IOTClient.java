@@ -10,8 +10,8 @@ public class IOTClient {
         String mqttServer = "tcp://localhost:1883";
         String topic = "testapp";
         String clientPrefix = "device";
-
         try {
+            Thread.sleep(3000);
             Properties properties = new Properties();
             FileInputStream in = new FileInputStream("iot.properties");
             properties.load(in);

@@ -1,11 +1,14 @@
 # app.py
+import time
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import mysql.connector
 
+time.sleep(3)
 db_connection = mysql.connector.connect(
-    host="127.0.0.1",
-    user="root",
+    host="host.docker.internal",
+    user="qjc",
     passwd="20020601Q"
 )
 
@@ -289,4 +292,4 @@ def get_device_location():
 
 
 if __name__ == '__main__':
-    app.run('127.0.0.1', port=5000, debug=True)
+    app.run('0.0.0.0', port=5000, debug=True)

@@ -1,12 +1,15 @@
 # 导入paho-mqtt客户端库
+import time
+
 import paho.mqtt.client as mqtt
 import json
 import mysql.connector
 
+time.sleep(3)
 # 创建一个数据库连接对象
 db_connection = mysql.connector.connect(
-    host="127.0.0.1",
-    user="root",
+    host="host.docker.internal",
+    user="qjc",
     passwd="20020601Q"
 )
 
@@ -47,7 +50,7 @@ client.on_connect = on_connect
 client.on_message = on_message
 
 # 连接到mqtt服务器，需要提供服务器的地址和端口
-client.connect("127.0.0.1", 7990, 60)
+client.connect("host.docker.internal", 1883, 60)
 
 # 启动一个循环，处理网络事件和调度回调函数
 client.loop_forever()
