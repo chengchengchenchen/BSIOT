@@ -5,18 +5,27 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import mysql.connector
 
-time.sleep(3)
-db_connection = mysql.connector.connect(
-    host="host.docker.internal",
-    user="qjc",
-    passwd="20020601Q"
-)
+MAX_RETRIES = 5
+
+for attempt in range(MAX_RETRIES):
+    try:
+        db_connection = mysql.connector.connect(
+            host="host.docker.internal",
+            user="qjc",
+            passwd="20020601Q"
+        )
+        break
+    except mysql.connector.Error as err:
+        print(f"Failed to connect to the database. Retrying ({attempt + 1}/{MAX_RETRIES})...")
+        time.sleep(1)
+else:
+    raise Exception("Failed to connect to the database after multiple attempts.")
 
 db_cursor = db_connection.cursor()
 db_cursor.execute("USE sys")
+
 app = Flask(__name__)
 CORS(app)
-
 
 @app.route('/login', methods=['POST'])
 def login():
